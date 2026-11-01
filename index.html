@@ -450,6 +450,8 @@ const HSC_PRESETS=[
   window.addEventListener('pageshow',event=>{if(event.persisted&&restorePending&&!running){draw();showRestoreConfirmation()}});
   if(!window.webkit?.messageHandlers?.examClockFullscreen){window.addEventListener('blur',()=>{if(running&&!focusLostAt)focusLostAt=Date.now()});window.addEventListener('focus',handleFocusReturn)}
   const glassStates=new Map();
+  const glassPaintQueue=new Set();let glassPaintFrame=0;
+  function queueGlassPaint(surface){glassPaintQueue.add(surface);if(glassPaintFrame)return;glassPaintFrame=requestAnimationFrame(()=>{glassPaintFrame=0;for(const target of glassPaintQueue){const state=glassStates.get(target);if(state)paintGlass(target,state)}glassPaintQueue.clear()})}
   const graphicsSlider=$('graphicsLevel'),graphicsSliderWrap=$('graphicsSliderWrap');
   const reduceMotionToggle=$('reduceMotion'),systemReduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||false;
   let reduceMotion=systemReduceMotion;
